@@ -155,23 +155,36 @@
           {
             "name": "[parameters('subnet1Name')]",
             "properties": {
-              "addressPrefix": "[parameters('subnet1Prefix')]"
+              "addressPrefix": "[parameters('subnet1Prefix')]",
+              "networkSecurityGroup": {
+                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_NSG1_name'))]"
+                            }
             }
           },
           {
             "name": "[parameters('subnet2Name')]",
             "properties": {
-              "addressPrefix": "[parameters('subnet2Prefix')]"
+              "addressPrefix": "[parameters('subnet2Prefix')]",
+              "networkSecurityGroup": {
+                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_NSG1_name'))]"
+                            }
             }
           },
           {
             "name": "[parameters('subnet3Name')]",
             "properties": {
-              "addressPrefix": "[parameters('subnet3Prefix')]"
+              "addressPrefix": "[parameters('subnet3Prefix')]",
+              "networkSecurityGroup": {
+                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_NSG1_name'))]"
+                            }
             }
           }
         ]
-      }
+      },
+      "dependsOn": [
+         "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_NSG1_name'))]"
+	  ]
+ 
     }
   ]
 }
