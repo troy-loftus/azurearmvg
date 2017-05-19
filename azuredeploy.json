@@ -78,7 +78,11 @@
                             "sourcePortRange": "*",
                             "destinationPortRange": "443",
                             "sourceAddressPrefix": "*",
+<<<<<<< HEAD
                             "destinationAddressPrefix": "[parameters'subnet1Name']",
+=======
+                            "destinationAddressPrefix": "10.0.0.0/24",
+>>>>>>> a3bab71d404612a5926bf571d3009aeea59debe9
                             "access": "Allow",
                             "priority": 100,
                             "direction": "Inbound"
@@ -90,8 +94,13 @@
                             "protocol": "TCP",
                             "sourcePortRange": "*",
                             "destinationPortRange": "443",
+<<<<<<< HEAD
                             "sourceAddressPrefix": "[parameters'subnet1Name']",
                             "destinationAddressPrefix": "[parameters'subnet2Name']",
+=======
+                            "sourceAddressPrefix": "10.0.0.0/24",
+                            "destinationAddressPrefix": "10.0.1.0/24",
+>>>>>>> a3bab71d404612a5926bf571d3009aeea59debe9
                             "access": "Allow",
                             "priority": 110,
                             "direction": "Inbound"
@@ -103,8 +112,13 @@
                             "protocol": "TCP",
                             "sourcePortRange": "*",
                             "destinationPortRange": "443",
+<<<<<<< HEAD
                             "sourceAddressPrefix": "[parameters'subnet2Name']",
                             "destinationAddressPrefix": "[parameters'subnet2Name']",
+=======
+                            "sourceAddressPrefix": "10.0.1.0/24",
+                            "destinationAddressPrefix": "10.0.1.0/24",
+>>>>>>> a3bab71d404612a5926bf571d3009aeea59debe9
                             "access": "Allow",
                             "priority": 120,
                             "direction": "Inbound"
@@ -129,7 +143,11 @@
                             "protocol": "*",
                             "sourcePortRange": "*",
                             "destinationPortRange": "*",
+<<<<<<< HEAD
                             "sourceAddressPrefix": "[parameters'subnet1Name']",
+=======
+                            "sourceAddressPrefix": "10.0.0.0/24",
+>>>>>>> a3bab71d404612a5926bf571d3009aeea59debe9
                             "destinationAddressPrefix": "*",
                             "access": "Deny",
                             "priority": 140,
