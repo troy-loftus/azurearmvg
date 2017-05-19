@@ -57,14 +57,91 @@
       "metadata": {
         "description": "Subnet 3 Name"
       }
+    },
+    "networkSecurityGroups_NSG1_name": {
+      "defaultValue": "NSG1",
+      "type": "String"
     }
   },
-  "variables": {
-    "apiVersion": "2015-06-15"
-  },
   "resources": [
-    {
-      "apiVersion": "[variables('apiVersion')]",
+       {
+            "type": "Microsoft.Network/networkSecurityGroups",
+            "name": "[parameters('networkSecurityGroups_NSG1_name')]",
+            "apiVersion": "2017-03-01",
+            "location": "westus2",
+            "properties": {
+                "securityRules": [
+                    {
+                        "name": "AllowInternetToFrontEndSubnet",
+                        "properties": {
+                            "protocol": "TCP",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "443",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "10.0.0.0/24",
+                            "access": "Allow",
+                            "priority": 100,
+                            "direction": "Inbound"
+                        }
+                    },
+                    {
+                        "name": "AllowFrontEndtoBackEnd",
+                        "properties": {
+                            "protocol": "TCP",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "443",
+                            "sourceAddressPrefix": "10.0.0.0/24",
+                            "destinationAddressPrefix": "10.0.1.0/24",
+                            "access": "Allow",
+                            "priority": 110,
+                            "direction": "Inbound"
+                        }
+                    },
+                    {
+                        "name": "AllowBackEndtoSelf",
+                        "properties": {
+                            "protocol": "TCP",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "443",
+                            "sourceAddressPrefix": "10.0.1.0/24",
+                            "destinationAddressPrefix": "10.0.1.0/24",
+                            "access": "Allow",
+                            "priority": 120,
+                            "direction": "Inbound"
+                        }
+                    },
+                    {
+                        "name": "DenyAllTraffic",
+                        "properties": {
+                            "protocol": "*",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "*",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "*",
+                            "access": "Deny",
+                            "priority": 130,
+                            "direction": "Inbound"
+                        }
+                    },
+                    {
+                        "name": "DenyFrontEndtoBackEnd",
+                        "properties": {
+                            "protocol": "*",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "*",
+                            "sourceAddressPrefix": "10.0.0.0/24",
+                            "destinationAddressPrefix": "*",
+                            "access": "Deny",
+                            "priority": 140,
+                            "direction": "Inbound"
+                        }
+                    }
+                ]
+            },
+            "dependsOn": []
+        },
+  {
+      "apiVersion": ""2015-06-15"",
       "type": "Microsoft.Network/virtualNetworks",
       "name": "[parameters('vnetName')]",
       "location": "[resourceGroup().location]",
