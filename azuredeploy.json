@@ -284,15 +284,15 @@
 			"apiVersion": "2015-08-01",
 			"type": "Microsoft.Web/hostingEnvironments",
 			"name": "[parameters('aseName')]",
-			"location": ["[resourceGroup().location]"],
+			"location": "[resourceGroup().location]",
 			"properties": {
 				"name": "[parameters('aseName')]",
-				"location": ["[resourceGroup().location]"],
+				"location": "[resourceGroup().location]",
 				"ipSslAddressCount": "[parameters('ipSslAddressCount')]",
 				"internalLoadBalancingMode": "[parameters('internalLoadBalancingMode')]",
 				"dnsSuffix": "[parameters('dnsSuffix')]",
 				"virtualNetwork": {
-					"name": "[parameters('vnetName')]",
+					"Id": "[resourceId('Microsoft.Network/virtualNetworks', parameters('vnetName'))]",
 					"Subnet": "[parameters('subnet1Name')]"
 				},
 				"multiSize": "[parameters('frontEndSize')]",
