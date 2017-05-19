@@ -1,190 +1,330 @@
 {
-  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
-  "contentVersion": "1.0.0.0",
-  "parameters": {
-    "vnetName": {
-      "type": "string",
-      "defaultValue": "VNet1",
-      "metadata": {
-        "description": "VNet name"
-      }
-    },
-    "vnetAddressPrefix": {
-      "type": "string",
-      "defaultValue": "10.0.0.0/16",
-      "metadata": {
-        "description": "Address prefix"
-      }
-    },
-    "subnet1Prefix": {
-      "type": "string",
-      "defaultValue": "10.0.0.0/24",
-      "metadata": {
-        "description": "Subnet 1 Prefix"
-      }
-    },
-    "subnet1Name": {
-      "type": "string",
-      "defaultValue": "Subnet1",
-      "metadata": {
-        "description": "Subnet 1 Name"
-      }
-    },
-    "subnet2Prefix": {
-      "type": "string",
-      "defaultValue": "10.0.1.0/24",
-      "metadata": {
-        "description": "Subnet 2 Prefix"
-      }
-    },
-    "subnet2Name": {
-      "type": "string",
-      "defaultValue": "Subnet2",
-      "metadata": {
-        "description": "Subnet 2 Name"
-      }
-    },
-    "subnet3Prefix": {
-      "type": "string",
-      "defaultValue": "10.0.2.0/24",
-      "metadata": {
-        "description": "Subnet 3 Prefix"
-      }
-    },
-    "subnet3Name": {
-      "type": "string",
-      "defaultValue": "Subnet3",
-      "metadata": {
-        "description": "Subnet 3 Name"
-      }
-    },
-    "networkSecurityGroups_NSG1_name": {
-      "defaultValue": "NSG1",
-      "type": "String"
-    }
-  },
-  "resources": [
-       {
-            "type": "Microsoft.Network/networkSecurityGroups",
-            "name": "[parameters('networkSecurityGroups_NSG1_name')]",
-            "apiVersion": "2017-03-01",
-            "location": "westus2",
-            "properties": {
-                "securityRules": [
-                    {
-                        "name": "AllowInternetToFrontEndSubnet",
-                        "properties": {
-                            "protocol": "TCP",
-                            "sourcePortRange": "*",
-                            "destinationPortRange": "443",
-                            "sourceAddressPrefix": "*",
-                            "destinationAddressPrefix": "[parameters('subnet1Prefix')]",
-                            "access": "Allow",
-                            "priority": 100,
-                            "direction": "Inbound"
-                        }
-                    },
-                    {
-                        "name": "AllowFrontEndtoBackEnd",
-                        "properties": {
-                            "protocol": "TCP",
-                            "sourcePortRange": "*",
-                            "destinationPortRange": "443",
-                            "sourceAddressPrefix": "[parameters('subnet1Prefix')]",
-                            "destinationAddressPrefix": "[parameters('subnet2Prefix')]",
-                            "access": "Allow",
-                            "priority": 110,
-                            "direction": "Inbound"
-                        }
-                    },
-                    {
-                        "name": "AllowBackEndtoSelf",
-                        "properties": {
-                            "protocol": "TCP",
-                            "sourcePortRange": "*",
-                            "destinationPortRange": "443",
-                            "sourceAddressPrefix": "[parameters('subnet2Prefix')]",
-                            "destinationAddressPrefix": "[parameters('subnet2Prefix')]",
-                            "access": "Allow",
-                            "priority": 120,
-                            "direction": "Inbound"
-                        }
-                    },
-                    {
-                        "name": "DenyAllTraffic",
-                        "properties": {
-                            "protocol": "*",
-                            "sourcePortRange": "*",
-                            "destinationPortRange": "*",
-                            "sourceAddressPrefix": "*",
-                            "destinationAddressPrefix": "*",
-                            "access": "Deny",
-                            "priority": 130,
-                            "direction": "Inbound"
-                        }
-                    },
-                    {
-                        "name": "DenyFrontEndtoBackEnd",
-                        "properties": {
-                            "protocol": "*",
-                            "sourcePortRange": "*",
-                            "destinationPortRange": "*",
-                            "sourceAddressPrefix": "[parameters('subnet1Prefix')]",
-                            "destinationAddressPrefix": "*",
-                            "access": "Deny",
-                            "priority": 140,
-                            "direction": "Inbound"
-                        }
-                    }
-                ]
-            },
-            "dependsOn": []
-        },
-  {
-      "apiVersion": "2015-06-15",
-      "type": "Microsoft.Network/virtualNetworks",
-      "name": "[parameters('vnetName')]",
-      "location": "[resourceGroup().location]",
-      "properties": {
-        "addressSpace": {
-          "addressPrefixes": [
-            "[parameters('vnetAddressPrefix')]"
-          ]
-        },
-        "subnets": [
-          {
-            "name": "[parameters('subnet1Name')]",
-            "properties": {
-              "addressPrefix": "[parameters('subnet1Prefix')]",
-              "networkSecurityGroup": {
-                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_NSG1_name'))]"
-                            }
-            }
-          },
-          {
-            "name": "[parameters('subnet2Name')]",
-            "properties": {
-              "addressPrefix": "[parameters('subnet2Prefix')]",
-              "networkSecurityGroup": {
-                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_NSG1_name'))]"
-                            }
-            }
-          },
-          {
-            "name": "[parameters('subnet3Name')]",
-            "properties": {
-              "addressPrefix": "[parameters('subnet3Prefix')]",
-              "networkSecurityGroup": {
-                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_NSG1_name'))]"
-                            }
-            }
-          }
-        ]
-      },
-      "dependsOn": [
-         "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_NSG1_name'))]"
-	  ]
- 
-    }
-  ]
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"vnetName": {
+			"type": "string",
+			"defaultValue": "VNet1",
+			"metadata": {
+				"description": "VNet name"
+			}
+		},
+		"vnetAddressPrefix": {
+			"type": "string",
+			"defaultValue": "10.0.0.0/16",
+			"metadata": {
+				"description": "Address prefix"
+			}
+		},
+		"subnet1Prefix": {
+			"type": "string",
+			"defaultValue": "10.0.0.0/24",
+			"metadata": {
+				"description": "Subnet 1 Prefix"
+			}
+		},
+		"subnet1Name": {
+			"type": "string",
+			"defaultValue": "Subnet1",
+			"metadata": {
+				"description": "Subnet 1 Name"
+			}
+		},
+		"subnet2Prefix": {
+			"type": "string",
+			"defaultValue": "10.0.1.0/24",
+			"metadata": {
+				"description": "Subnet 2 Prefix"
+			}
+		},
+		"subnet2Name": {
+			"type": "string",
+			"defaultValue": "Subnet2",
+			"metadata": {
+				"description": "Subnet 2 Name"
+			}
+		},
+		"subnet3Prefix": {
+			"type": "string",
+			"defaultValue": "10.0.2.0/24",
+			"metadata": {
+				"description": "Subnet 3 Prefix"
+			}
+		},
+		"subnet3Name": {
+			"type": "string",
+			"defaultValue": "Subnet3",
+			"metadata": {
+				"description": "Subnet 3 Name"
+			}
+		},
+		"networkSecurityGroups_NSG1_name": {
+			"defaultValue": "NSG1",
+			"type": "String"
+		},
+		"aseName": {
+			"type": "string",
+			"metadata": {
+				"description": "Name of the App Service Environment"
+			}
+		},
+		"ipSslAddressCount": {
+			"type": "int",
+			"defaultValue": 0,
+			"metadata": {
+				"description": "Number of IP addresses for the IP-SSL address pool.  This value *must* be zero when internalLoadBalancing mode is set to either 1 or 3."
+			}
+		},
+		"existingVnetResourceId": {
+			"type": "string",
+			"metadata": {
+				"description": "ARM Url reference for the virtual network that will contain the ASE.  Use Microsoft.Network for ARM vnets.  Use Microsoft.ClassicNetwork for older ASM vnets.  /subscriptions/subIDGoesHere/resourceGroups/rgNameGoesHere/providers/Microsoft.Network/virtualNetworks/vnetnamegoeshere"
+			}
+		},
+		"subnetName": {
+			"type": "string",
+			"metadata": {
+				"description": "Subnet name that will contain the App Service Environment"
+			}
+		},
+		"internalLoadBalancingMode": {
+			"type": "int",
+			"defaultValue": 3,
+			"metadata": {
+				"description": "0 = public VIP only, 1 = only ports 80/443 are mapped to ILB VIP, 2 = only FTP ports are mapped to ILB VIP, 3 = both ports 80/443 and FTP ports are mapped to an ILB VIP."
+			}
+		},
+		"dnsSuffix": {
+			"type": "string",
+			"metadata": {
+				"description": "Used *only* when deploying an ILB enabled ASE.  Set this to the root domain associated with the ASE.  For example: contoso.com"
+			}
+		},
+		"frontEndSize": {
+			"type": "string",
+			"allowedValues": [
+				"Medium",
+				"Large",
+				"ExtraLarge"
+			],
+			"defaultValue": "Medium",
+			"metadata": {
+				"description": "Instance size for the front-end pool.  Maps to P2,P3,P4."
+			}
+		},
+		"frontEndCount": {
+			"type": "int",
+			"defaultValue": 2,
+			"metadata": {
+				"description": "Number of instances in the front-end pool.  Minimum of two."
+			}
+		},
+		"workerPoolOneInstanceSize": {
+			"type": "string",
+			"allowedValues": [
+				"Small",
+				"Medium",
+				"Large",
+				"ExtraLarge"
+			],
+			"defaultValue": "Small",
+			"metadata": {
+				"description": "Instance size for worker pool one.  Maps to P1,P2,P3,P4."
+			}
+		},
+		"workerPoolOneInstanceCount": {
+			"type": "int",
+			"defaultValue": 2,
+			"metadata": {
+				"description": "Number of instances in worker pool one.  Minimum of two."
+			}
+		},
+		"workerPoolTwoInstanceSize": {
+			"type": "string",
+			"allowedValues": [
+				"Small",
+				"Medium",
+				"Large",
+				"ExtraLarge"
+			],
+			"defaultValue": "Small",
+			"metadata": {
+				"description": "Instance size for worker pool two.  Maps to P1,P2,P3,P4."
+			}
+		},
+		"workerPoolTwoInstanceCount": {
+			"type": "int",
+			"defaultValue": 0,
+			"metadata": {
+				"description": "Number of instances in worker pool two.  Can be zero if not using worker pool two."
+			}
+		},
+		"workerPoolThreeInstanceSize": {
+			"type": "string",
+			"allowedValues": [
+				"Small",
+				"Medium",
+				"Large",
+				"ExtraLarge"
+			],
+			"defaultValue": "Small",
+			"metadata": {
+				"description": "Instance size for worker pool three.  Maps to P1,P2,P3,P4."
+			}
+		},
+		"workerPoolThreeInstanceCount": {
+			"type": "int",
+			"defaultValue": 0,
+			"metadata": {
+				"description": "Number of instances in worker pool three.  Can be zero if not using worker pool three."
+			}
+		}
+	},
+	"resources": [{
+			"apiVersion": "2015-08-01",
+			"type": "Microsoft.Web/hostingEnvironments",
+			"name": "[parameters('aseName')]",
+			"location": "[resourceGroup().location]",
+			"properties": {
+				"name": "[parameters('aseName')]",
+				"location": "[resourceGroup().location]",
+				"ipSslAddressCount": "[parameters('ipSslAddressCount')]",
+				"internalLoadBalancingMode": "[parameters('internalLoadBalancingMode')]",
+				"dnsSuffix": "[parameters('dnsSuffix')]",
+				"virtualNetwork": {
+					"name": "[parameters('vnetName')]",
+					"Subnet": "[parameters('subnet1Name')]"
+				},
+				"multiSize": "[parameters('frontEndSize')]",
+				"multiRoleCount": "[parameters('frontEndCount')]",
+				"workerPools": [{
+						"workerSizeId": 0,
+						"workerSize": "[parameters('workerPoolOneInstanceSize')]",
+						"workerCount": "[parameters('workerPoolOneInstanceCount')]"
+					}, {
+						"workerSizeId": 1,
+						"workerSize": "[parameters('workerPoolTwoInstanceSize')]",
+						"workerCount": "[parameters('workerPoolTwoInstanceCount')]"
+					}, {
+						"workerSizeId": 2,
+						"workerSize": "[parameters('workerPoolThreeInstanceSize')]",
+						"workerCount": "[parameters('workerPoolThreeInstanceCount')]"
+					}
+				]
+			},
+			"dependsOn": "[resourceId('Microsoft.Network/virtualNetworks', parameters('vnetName'))]"
+		}, {
+			"type": "Microsoft.Network/networkSecurityGroups",
+			"name": "[parameters('networkSecurityGroups_NSG1_name')]",
+			"apiVersion": "2017-03-01",
+			"location": "[resourceGroup().location]",
+			"properties": {
+				"securityRules": [{
+						"name": "AllowInternetToFrontEndSubnet",
+						"properties": {
+							"protocol": "TCP",
+							"sourcePortRange": "*",
+							"destinationPortRange": "443",
+							"sourceAddressPrefix": "*",
+							"destinationAddressPrefix": "[parameters('subnet1Prefix')]",
+							"access": "Allow",
+							"priority": 100,
+							"direction": "Inbound"
+						}
+					}, {
+						"name": "AllowFrontEndtoBackEnd",
+						"properties": {
+							"protocol": "TCP",
+							"sourcePortRange": "*",
+							"destinationPortRange": "443",
+							"sourceAddressPrefix": "[parameters('subnet1Prefix')]",
+							"destinationAddressPrefix": "[parameters('subnet2Prefix')]",
+							"access": "Allow",
+							"priority": 110,
+							"direction": "Inbound"
+						}
+					}, {
+						"name": "AllowBackEndtoSelf",
+						"properties": {
+							"protocol": "TCP",
+							"sourcePortRange": "*",
+							"destinationPortRange": "443",
+							"sourceAddressPrefix": "[parameters('subnet2Prefix')]",
+							"destinationAddressPrefix": "[parameters('subnet2Prefix')]",
+							"access": "Allow",
+							"priority": 120,
+							"direction": "Inbound"
+						}
+					}, {
+						"name": "DenyAllTraffic",
+						"properties": {
+							"protocol": "*",
+							"sourcePortRange": "*",
+							"destinationPortRange": "*",
+							"sourceAddressPrefix": "*",
+							"destinationAddressPrefix": "*",
+							"access": "Deny",
+							"priority": 130,
+							"direction": "Inbound"
+						}
+					}, {
+						"name": "DenyFrontEndtoBackEnd",
+						"properties": {
+							"protocol": "*",
+							"sourcePortRange": "*",
+							"destinationPortRange": "*",
+							"sourceAddressPrefix": "[parameters('subnet1Prefix')]",
+							"destinationAddressPrefix": "*",
+							"access": "Deny",
+							"priority": 140,
+							"direction": "Inbound"
+						}
+					}
+				]
+			},
+			"dependsOn": []
+		}, {
+			"apiVersion": "2015-06-15",
+			"type": "Microsoft.Network/virtualNetworks",
+			"name": "[parameters('vnetName')]",
+			"location": "[resourceGroup().location]",
+			"properties": {
+				"addressSpace": {
+					"addressPrefixes": [
+						"[parameters('vnetAddressPrefix')]"
+					]
+				},
+				"subnets": [{
+						"name": "[parameters('subnet1Name')]",
+						"properties": {
+							"addressPrefix": "[parameters('subnet1Prefix')]",
+							"networkSecurityGroup": {
+								"id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_NSG1_name'))]"
+							}
+						}
+					}, {
+						"name": "[parameters('subnet2Name')]",
+						"properties": {
+							"addressPrefix": "[parameters('subnet2Prefix')]",
+							"networkSecurityGroup": {
+								"id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_NSG1_name'))]"
+							}
+						}
+					}, {
+						"name": "[parameters('subnet3Name')]",
+						"properties": {
+							"addressPrefix": "[parameters('subnet3Prefix')]",
+							"networkSecurityGroup": {
+								"id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_NSG1_name'))]"
+							}
+						}
+					}
+				]
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_NSG1_name'))]"
+			]
+
+		}
+	]
 }
