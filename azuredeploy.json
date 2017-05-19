@@ -68,6 +68,12 @@
 				"description": "Name of the App Service Environment"
 			}
 		},
+		"aseName2": {
+			"type": "string",
+			"metadata": {
+				"description": "Name of the App Service Environment"
+			}
+		},
 		"ipSslAddressCount": {
 			"type": "int",
 			"defaultValue": 0,
@@ -284,16 +290,51 @@
 			"apiVersion": "2015-08-01",
 			"type": "Microsoft.Web/hostingEnvironments",
 			"name": "[parameters('aseName')]",
-			"location": "[resourceGroup().location]",
+			"location": "West US 2",
 			"properties": {
 				"name": "[parameters('aseName')]",
-				"location": "[resourceGroup().location]",
+				"location": "West US 2",
 				"ipSslAddressCount": "[parameters('ipSslAddressCount')]",
 				"internalLoadBalancingMode": "[parameters('internalLoadBalancingMode')]",
 				"dnsSuffix": "[parameters('dnsSuffix')]",
 				"virtualNetwork": {
 					"Id": "[resourceId('Microsoft.Network/virtualNetworks', parameters('vnetName'))]",
 					"Subnet": "[parameters('subnet1Name')]"
+				},
+				"multiSize": "[parameters('frontEndSize')]",
+				"multiRoleCount": "[parameters('frontEndCount')]",
+				"workerPools": [{
+						"workerSizeId": 0,
+						"workerSize": "[parameters('workerPoolOneInstanceSize')]",
+						"workerCount": "[parameters('workerPoolOneInstanceCount')]"
+					}, {
+						"workerSizeId": 1,
+						"workerSize": "[parameters('workerPoolTwoInstanceSize')]",
+						"workerCount": "[parameters('workerPoolTwoInstanceCount')]"
+					}, {
+						"workerSizeId": 2,
+						"workerSize": "[parameters('workerPoolThreeInstanceSize')]",
+						"workerCount": "[parameters('workerPoolThreeInstanceCount')]"
+					}
+				]
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Network/virtualNetworks', parameters('vnetName'))]"
+			]
+		}, {
+			"apiVersion": "2015-08-01",
+			"type": "Microsoft.Web/hostingEnvironments",
+			"name": "[parameters('aseName2')]",
+			"location": "West US 2",
+			"properties": {
+				"name": "[parameters('aseName2')]",
+				"location": "West US 2",
+				"ipSslAddressCount": "[parameters('ipSslAddressCount')]",
+				"internalLoadBalancingMode": "[parameters('internalLoadBalancingMode')]",
+				"dnsSuffix": "[parameters('dnsSuffix')]",
+				"virtualNetwork": {
+					"Id": "[resourceId('Microsoft.Network/virtualNetworks', parameters('vnetName'))]",
+					"Subnet": "[parameters('subnet2Name')]"
 				},
 				"multiSize": "[parameters('frontEndSize')]",
 				"multiRoleCount": "[parameters('frontEndCount')]",
